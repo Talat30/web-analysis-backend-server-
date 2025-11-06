@@ -16,7 +16,8 @@ app.get("/", (req, res) => {
 });
 
 // ✅ Use all API routes from routes/events.js
-app.use("/api", eventRoutes);
+app.use("/", eventRoutes);
+
 
 // ✅ Global error handler
 app.use((err, req, res, next) => {
