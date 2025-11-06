@@ -4,6 +4,8 @@ import morgan from "morgan";
 import eventRoutes from "./routes/events.js";
 
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(morgan("tiny"));
@@ -25,7 +27,9 @@ app.use("/api", eventRoutes);
 // Track endpoint
 app.post("/api/track", (req, res) => {
   const { page, timeSpent } = req.body;
-  if (!page) return res.status(400).json({ error: "Missing 'page'" });
+  if (!page) {
+    return res.status(400).json({ error: "Missing 'page'" });
+  }
 
   analytics.totalVisits++;
   if (!analytics.pageVisits[page]) {
@@ -37,16 +41,14 @@ app.post("/api/track", (req, res) => {
   res.json({ message: "Event tracked successfully" });
 });
 
-
-
-
 // Global error handler
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
   res.status(500).json({ error: "Something went wrong" });
 });
 
-const PORT = process.env.PORT || 5001; // ✅ Change to 5001 to avoid conflict
-app.listen(PORT, () =>
-  console.log(`🚀 Server listening at http://localhost:${PORT}`)
-);
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
