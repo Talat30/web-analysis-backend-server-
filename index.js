@@ -1,8 +1,6 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import path from "path";
-import { fileURLToPath } from "url";
 import eventRoutes from "./routes/events.js";
 
 const app = express();
@@ -16,12 +14,12 @@ const analytics = {
   pageVisits: {}, // { "/home": { count: 5, totalTime: 50 } }
 };
 
-// Root endpoint (API check)
-app.get("/api", (req, res) => {
+// Root endpoint
+app.get("/", (req, res) => {
   res.send("✅ Web Analytics Collector API is running!");
 });
 
-// Event routes
+// Existing event routes
 app.use("/api", eventRoutes);
 
 // Track endpoint
@@ -39,17 +37,8 @@ app.post("/api/track", (req, res) => {
   res.json({ message: "Event tracked successfully" });
 });
 
-// ✅ Serve frontend build
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const frontendPath = path.resolve(__dirname, "../web_analysis-main/frontend/dist");
 
-app.use(express.static(frontendPath));
 
-// All other routes -> frontend index.html
-app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -57,8 +46,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Something went wrong" });
 });
 
-// ✅ Use Render's assigned PORT
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5001; // ✅ Change to 5001 to avoid conflict
 app.listen(PORT, () =>
   console.log(`🚀 Server listening at http://localhost:${PORT}`)
 );
